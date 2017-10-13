@@ -1,0 +1,33 @@
+---
+- name: install essential packages for this task
+  become: True
+  apt: pkg={{ item }} update_cache=yes cache_valid_time=1200
+  with_items:
+    - openntpd
+  register: result
+  
+- name: replace the 'listen on' address
+  become: True
+  lineinfile:
+    path: /etc/openntpd/ntpd.conf
+    regexp: "^listen on"
+    line: "listen on {{ homegw_openntpd_listenon_address }}"
+  when: homegw_openntpd_listenon_address != ''  
+  register: result
+
+- name: remove all 'server' line
+  become: True
+  lineinfile:
+    path: /etc/openntpd/ntpd.conf
+    regexp: "^server"
+    state: absent
+  register: result
+  
+- name: replace the 'server' address
+  become: True
+  lineinfile:
+    path: /etc/openntpd/ntpd.conf
+    regexp: "^server {{ item }}"
+    line: "server {{ item }}"
+  with_items: "{{ homegw_openntpd_server_addresses }}"
+  register: result

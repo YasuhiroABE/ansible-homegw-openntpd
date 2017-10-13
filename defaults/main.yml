@@ -1,0 +1,7 @@
+---
+
+# local network address to listen
+homegw_openntpd_listenon_address: ''
+
+# external ntp server address
+homegw_openntpd_server_addresses: []
